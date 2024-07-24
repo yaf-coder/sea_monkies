@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'intro_to_ros'
+package_name = 'dancing'
 
 setup(
     name=package_name,
@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'publisher = intro_to_ros.publisher:main',
-            'subscriber = intro_to_ros.subscriber:main',
+            'movement = dancing.movement:main',
+            'arming = dancing.arm:main',
         ],
     },
 )
