@@ -61,7 +61,10 @@ class DanceNode(Node):
     def _dance_moves(self):
         self._step_counter += 1
 
+        self._set_neutral_all_channels()
+
         if self._step_counter < 5:
+            self._set_neutral_all_channels()
             self._move_forward = True
             self._move_back = False
         elif self._step_counter < 7:
@@ -94,14 +97,14 @@ class DanceNode(Node):
             self._turn_right = True
         elif self._step_counter < 40:
             self._set_neutral_all_channels()
-            # self._turn_right = False
-            # self._turn_left = False
-            # self._move_forward = False
-            # self._move_back = False
-            # self._move_left = False
-            # self._move_right = False
-            # self._move_down = False
-            # self._move_up = False
+            self._turn_right = False
+            self._turn_left = False
+            self._move_forward = False
+            self._move_back = False
+            self._move_left = False
+            self._move_right = False
+            self._move_down = False
+            self._move_up = False
 
     def destroy_node(self):
         return super().destroy_node()

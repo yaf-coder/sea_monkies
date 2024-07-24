@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'movement = sea_monkies.movement:main',
-            'arming = sea_monkies.arm:main',
+            'arming = sea_monkies.arming:main',
+            'pressure = sea_monkies.pressure:main',
         ],
     },
 )
