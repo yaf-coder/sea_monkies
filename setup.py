@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'dancing'
+package_name = 'sea_monkies'
 
 setup(
     name=package_name,
@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'movement = dancing.movement:main',
-            'arming = dancing.arm:main',
+            'movement = sea_monkies.movement:main',
+            'arming = sea_monkies.arm:main',
         ],
     },
 )
