@@ -1,7 +1,8 @@
+#!/usr/bin/env python
+
 import rclpy
 from rclpy.node import Node
 from mavros_msgs.msg import ManualControl, Altitude
-
 
 class DepthPIDNode(Node):
     previous_error = 0.0
@@ -12,36 +13,34 @@ class DepthPIDNode(Node):
     def __init__(self):
         super().__init__("depth_pid_node")
 
-        self.declare_parameter("Kp", -50.0)
-        self.Kp = self.get_parameter("Kp").value
-        self.declare_parameter("Ki", 0.0)
-        self.Ki = self.get_parameter("Ki").value
-        self.declare_parameter("Kd", 30.0)
-        self.Kd = self.get_parameter("Kd").value
-        self.declare_parameter("max_integral", 1.0)
-        self.max_integral = self.get_parameter("max_integral").value
-        self.declare_parameter("max_throttle", 100.0)
-        self.max_throttle = self.get_parameter("max_throttle").value
+        self.Kp = -50.0
+        self.Ki = 0.0
+        self.Kd = 30.0
+        self.max_integral = 1.0
+        self.max_throttle = 100.0
+        self.desired_depth_value = 1
 
         self.depth_sub = self.create_subscription(
-            Altitude, "bluerov2/depth", self.depth_callback, 10
+            Altitude, "bluerov2/bluerov2/depth", self.depth_callback, 10
         )
         self.desired_depth_sub = self.create_subscription(
-            Altitude, "bluerov2/desired_depth", self.desired_depth_callback, 10
+            Altitude, "bluerov2/bluerov2/desired_depth", self.desired_depth_callback, 10
         )
 
         self.manual_control_pub = self.create_publisher(
-            ManualControl, "bluerov2/manual_control", 10
+            ManualControl, "bluerov2/bluerov2/manual_control", 10
         )
+        
         self.get_logger().info("starting nodes")
+        
+        self.desired_depth = Altitude()
+        self.desired_depth.local = self.desired_depth_value
 
     def depth_callback(self, msg):
-        self.get_logger().info("depth callback was run")
         depth: Altitude = msg
-        self.get_logger().debug(f"Depth: {depth}")
+        self.get_logger().info(f"Depth: {depth}")
 
         if self.desired_depth is None:
-            self.get_logger().info("no desired depth")
             return
 
         error = self.desired_depth.local - depth.local
@@ -56,6 +55,10 @@ class DepthPIDNode(Node):
             - self.previous_depth.header.stamp.sec
             - self.previous_depth.header.stamp.nanosec * 1e-9
         )
+        
+        if dt == 0:
+            self.get_logger().warn("dt is zero, skipping this update")
+            return
 
         # Propotional term
         propotional = self.Kp * error
@@ -77,12 +80,10 @@ class DepthPIDNode(Node):
         manual_control_msg = ManualControl()
         manual_control_msg.z = throttle
         self.manual_control_pub.publish(manual_control_msg)
-        self.get_logger().info("control was published")
 
     def desired_depth_callback(self, msg):
         self.desired_depth = msg
-        self.get_logger().debug(f"Desired depth: {self.desired_depth}")
-
+        self.get_logger().info(f"Desired depth: {self.desired_depth.local}")
 
 def main(args=None):
     rclpy.init(args=args)

@@ -14,14 +14,20 @@ class pressure_node(Node):
 
         self.sub = self.create_subscription(
             Pressure,
-            "bluerov2/bluerov2/pressure",
+            "bluerov2/pressure",
             self.pressure_callback,
             10
         )
 
         self.depth_pub = self.create_publisher(
             Altitude,
-            "bluerov2/bluerov2/depth",
+            "bluerov2/depth",
+            10
+        )
+
+        self.desired_depth_pub = self.create_publisher(
+            Altitude,
+            "bluerov2/desired_depth",
             10
         )
 
@@ -43,6 +49,9 @@ class pressure_node(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.local = self.pressure / (gravity * density)
         self.depth_pub.publish(msg)
+        dd = Altitude()
+        dd.local = -10.0
+        self.desired_depth_pub.publish(dd)
 
     def timer_callback(self):
         if self.pressure > 0:

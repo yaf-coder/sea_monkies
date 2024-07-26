@@ -23,6 +23,8 @@ setup(
             'movement = sea_monkies.movement:main',
             'arming = sea_monkies.arming:main',
             'pressure = sea_monkies.pressure:main',
+            'pid_controller = sea_monkies.pid_controller:main',
+            'angle_controller = sea_monkies.angle_controller:main',
         ],
     },
 )
