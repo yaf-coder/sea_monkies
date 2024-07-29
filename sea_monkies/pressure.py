@@ -50,7 +50,7 @@ class pressure_node(Node):
         msg.local = self.pressure / (gravity * density)
         self.depth_pub.publish(msg)
         dd = Altitude()
-        dd.local = -10.0
+        dd.local = -15.0
         self.desired_depth_pub.publish(dd)
 
     def timer_callback(self):
